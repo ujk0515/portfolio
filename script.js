@@ -172,6 +172,23 @@ function showPortfolioDetail(portfolioId) {
     loadPortfolioFile(portfolioId);
 }
 
+// 이력서/자기소개서 상세 보기
+function showResumeDetail(resumeType) {
+    // 상세 섹션으로 전환
+    switchSection('resume-detail');
+
+    // 제목 업데이트
+    const title = document.getElementById('resumeTitle');
+    const titleMap = {
+        'resume': '이력서',
+        'cover-letter': '자기소개서'
+    };
+    title.textContent = titleMap[resumeType];
+
+    // 파일 로드
+    loadResumeFile(resumeType);
+}
+
 // 포트폴리오 파일 로드
 async function loadPortfolioFile(portfolioId) {
     const viewer = document.querySelector('#portfolio-detail .file-viewer');
@@ -197,6 +214,40 @@ async function loadPortfolioFile(portfolioId) {
         }
     } catch (error) {
         console.error('포트폴리오 파일 로드 에러:', error);
+        viewer.innerHTML = '<p>파일을 불러오는 중 오류가 발생했습니다.</p>';
+    }
+}
+
+// 이력서/자기소개서 파일 로드
+async function loadResumeFile(resumeType) {
+    const viewer = document.querySelector('#resume-detail .file-viewer');
+
+    // 로딩 화면 표시
+    viewer.innerHTML = `
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">로딩 중입니다...</div>
+        </div>
+    `;
+
+    try {
+        const fileMap = {
+            'resume': 'cover-letter/resume.pdf',
+            'cover-letter': 'cover-letter/cover-letter.pdf'
+        };
+
+        const fileName = fileMap[resumeType];
+
+        // Edge Function을 통해 파일 URL 가져오기
+        const publicUrl = await getFileUrl(fileName);
+
+        if (publicUrl) {
+            await displayFile('resume-detail', publicUrl, 'pdf');
+        } else {
+            viewer.innerHTML = '<p>파일을 찾을 수 없습니다. Supabase에 파일을 업로드해주세요.</p>';
+        }
+    } catch (error) {
+        console.error('이력서 파일 로드 에러:', error);
         viewer.innerHTML = '<p>파일을 불러오는 중 오류가 발생했습니다.</p>';
     }
 }
@@ -276,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 서브메뉴 토글 (포트폴리오 카드 그리드도 표시)
-    const submenuToggle = document.querySelector('.menu-item.has-submenu');
-    if (submenuToggle) {
+    // 서브메뉴 토글 (카드 그리드 표시)
+    const submenuToggles = document.querySelectorAll('.menu-item.has-submenu');
+    submenuToggles.forEach(submenuToggle => {
         submenuToggle.addEventListener('click', (e) => {
             e.preventDefault();
 
@@ -287,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submenuToggle.classList.toggle('open');
             submenu.classList.toggle('open');
 
-            // 포트폴리오 섹션으로 이동 (카드 그리드 표시)
+            // 섹션으로 이동 (카드 그리드 표시)
             const section = submenuToggle.getAttribute('data-section');
             switchSection(section);
 
@@ -298,15 +349,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 300); // 애니메이션 완료 후
             }
         });
-    }
+    });
 
-    // 서브메뉴 아이템 클릭 이벤트 (포트폴리오 상세로 이동)
+    // 서브메뉴 아이템 클릭 이벤트
     const submenuItems = document.querySelectorAll('.submenu-item');
     submenuItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
+
+            // 포트폴리오인지 이력서인지 확인
             const portfolioId = item.getAttribute('data-portfolio');
-            showPortfolioDetail(portfolioId);
+            const resumeType = item.getAttribute('data-resume');
+
+            if (portfolioId) {
+                showPortfolioDetail(portfolioId);
+            } else if (resumeType) {
+                showResumeDetail(resumeType);
+            }
 
             // 서브메뉴 활성화 상태 업데이트
             submenuItems.forEach(si => si.classList.remove('active'));
@@ -314,12 +373,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 포트폴리오 카드 클릭 이벤트
+    // 카드 클릭 이벤트 (포트폴리오 + 이력서)
     const portfolioCards = document.querySelectorAll('.portfolio-card');
     portfolioCards.forEach(card => {
         card.addEventListener('click', () => {
             const portfolioId = card.getAttribute('data-portfolio');
-            showPortfolioDetail(portfolioId);
+            const resumeType = card.getAttribute('data-resume');
+
+            if (portfolioId) {
+                showPortfolioDetail(portfolioId);
+            } else if (resumeType) {
+                showResumeDetail(resumeType);
+            }
         });
     });
 
@@ -328,6 +393,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToGrid) {
         backToGrid.addEventListener('click', () => {
             switchSection('portfolio');
+        });
+    }
+
+    const backToResumeGrid = document.getElementById('backToResumeGrid');
+    if (backToResumeGrid) {
+        backToResumeGrid.addEventListener('click', () => {
+            switchSection('resume-cover');
         });
     }
 
@@ -341,6 +413,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 포트폴리오 카드 썸네일 로드
     loadPortfolioThumbnails();
+
+    // 이력서&자기소개서 카드 썸네일 로드
+    loadResumeThumbnails();
 
     // AI 포트폴리오 카드 클릭 이벤트
     const aiCards = document.querySelectorAll('.ai-card');
@@ -385,6 +460,18 @@ async function loadPortfolioThumbnails() {
     }
 }
 
+// 이력서&자기소개서 카드 썸네일 로드
+async function loadResumeThumbnails() {
+    const resumeTypes = ['resume', 'cover-letter'];
+    for (const type of resumeTypes) {
+        const card = document.querySelector(`.portfolio-card[data-resume="${type}"]`);
+        if (card) {
+            const previewElement = card.querySelector('.card-preview');
+            await renderResumeThumbnail(type, previewElement);
+        }
+    }
+}
+
 // 썸네일 렌더링
 async function renderThumbnail(portfolioId, container) {
     try {
@@ -422,6 +509,52 @@ async function renderThumbnail(portfolioId, container) {
         }
     } catch (error) {
         console.error(`썸네일 로드 실패 (Portfolio ${portfolioId}):`, error);
+        // 에러 시 기본 플레이스홀더 유지
+    }
+}
+
+// 이력서 썸네일 렌더링
+async function renderResumeThumbnail(resumeType, container) {
+    try {
+        const fileMap = {
+            'resume': 'cover-letter/resume.pdf',
+            'cover-letter': 'cover-letter/cover-letter.pdf'
+        };
+
+        const fileName = fileMap[resumeType];
+
+        // Edge Function을 통해 파일 URL 가져오기
+        const publicUrl = await getFileUrl(fileName);
+
+        if (publicUrl) {
+            // PDF.js 워커 설정
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+            const loadingTask = pdfjsLib.getDocument(publicUrl);
+            const pdf = await loadingTask.promise;
+            const page = await pdf.getPage(1); // 첫 페이지만
+
+            const scale = 0.5; // 썸네일 크기
+            const viewport = page.getViewport({ scale: scale });
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.objectFit = 'cover';
+
+            container.innerHTML = '';
+            container.appendChild(canvas);
+
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+        }
+    } catch (error) {
+        console.error(`썸네일 로드 실패 (${resumeType}):`, error);
         // 에러 시 기본 플레이스홀더 유지
     }
 }

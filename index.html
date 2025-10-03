@@ -17,7 +17,13 @@
         <nav class="menu">
             <ul>
                 <li><a href="#" data-section="dashboard" class="menu-item home-btn active">🏠 홈</a></li>
-                <li><a href="#" data-section="cover-letter" class="menu-item">1. 이력서&자기소개서</a></li>
+                <li class="menu-group">
+                    <a href="#" data-section="resume-cover" class="menu-item has-submenu">1. 이력서&자기소개서 <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="#" data-resume="resume" class="submenu-item"><span class="marquee-text">이력서</span></a></li>
+                        <li><a href="#" data-resume="cover-letter" class="submenu-item"><span class="marquee-text">자기소개서</span></a></li>
+                    </ul>
+                </li>
                 <li><a href="#" data-section="career" class="menu-item">2. 경력기술서</a></li>
                 <li class="menu-group">
                     <a href="#" data-section="portfolio" class="menu-item has-submenu">3. 포트폴리오 <span class="arrow">▼</span></a>
@@ -137,9 +143,38 @@
                 </div>
             </section>
 
-            <!-- 자기소개서 섹션 -->
-            <section id="cover-letter" class="content-section">
+            <!-- 이력서&자기소개서 섹션 -->
+            <section id="resume-cover" class="content-section">
                 <h1>이력서&자기소개서</h1>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card" data-resume="resume">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">이력서</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>이력서</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card" data-resume="cover-letter">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">자기소개서</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>자기소개서</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 이력서/자기소개서 상세 뷰 -->
+            <section id="resume-detail" class="content-section">
+                <div class="detail-header">
+                    <button id="backToResumeGrid" class="back-btn">← 목록으로</button>
+                    <h1 id="resumeTitle">이력서&자기소개서</h1>
+                </div>
                 <div class="file-viewer">
                     <p>파일을 불러오는 중...</p>
                 </div>
