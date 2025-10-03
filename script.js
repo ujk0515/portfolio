@@ -90,6 +90,15 @@ function initSidebarToggleFromMain() {
     });
 }
 
+// 모든 서브메뉴 닫기
+function closeAllSubmenus() {
+    const openMenus = document.querySelectorAll('.menu-item.has-submenu.open');
+    const openSubmenus = document.querySelectorAll('.submenu.open');
+
+    openMenus.forEach(menu => menu.classList.remove('open'));
+    openSubmenus.forEach(submenu => submenu.classList.remove('open'));
+}
+
 // ========================================
 // 메뉴 네비게이션
 // ========================================
@@ -323,6 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const section = item.getAttribute('data-section');
+
+            // 다른 메뉴로 이동 시 열려있는 서브메뉴 닫기
+            closeAllSubmenus();
+
             switchSection(section);
         });
     });
