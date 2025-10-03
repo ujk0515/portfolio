@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+    <!-- 좌측 메뉴바 -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <button id="toggleSidebar" class="toggle-btn">☰</button>
+            <button id="themeToggle" class="theme-toggle-btn">🌙</button>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li><a href="#" data-section="dashboard" class="menu-item home-btn active">🏠 홈</a></li>
+                <li><a href="#" data-section="cover-letter" class="menu-item">1. 이력서&자기소개서</a></li>
+                <li><a href="#" data-section="career" class="menu-item">2. 경력기술서</a></li>
+                <li class="menu-group">
+                    <a href="#" data-section="portfolio" class="menu-item has-submenu">3. 포트폴리오 <span class="arrow">▼</span></a>
+                    <ul class="submenu">
+                        <li><a href="#" data-portfolio="1" class="submenu-item"><span class="marquee-text">Tool_Katalon_studio_with_Gemini_AI</span></a></li>
+                        <li><a href="#" data-portfolio="2" class="submenu-item"><span class="marquee-text">Game_컴프야_개선안</span></a></li>
+                        <li><a href="#" data-portfolio="3" class="submenu-item"><span class="marquee-text">사용법_Testmo_사용법</span></a></li>
+                        <li><a href="#" data-portfolio="4" class="submenu-item"><span class="marquee-text">사용법_iOS_memory_누수검증</span></a></li>
+                        <li><a href="#" data-portfolio="5" class="submenu-item"><span class="marquee-text">이론_QA의 목적</span></a></li>
+                    </ul>
+                </li>
+                <li><a href="#" data-section="ai-portfolio" class="menu-item">4. AI 포트폴리오(LINK)</a></li>
+                <li><span class="menu-item disabled">준비중</span></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main id="mainContent" class="main-content">
+        <div class="content-box">
+            <!-- 대시보드 섹션 -->
+            <section id="dashboard" class="content-section active">
+                <h1>대시보드</h1>
+                <div class="dashboard-container">
+                    <div class="profile-card">
+                        <div class="profile-info">
+                            <h2>유 재 권 (兪 在 權)</h2>
+                            <p class="english-name">YOO JAEKWON</p>
+                            <div class="info-row">
+                                <span class="label">지역:</span>
+                                <span class="value">인천광역시 미추홀구 주안동</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">직군:</span>
+                                <span class="value">QA Engineer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="career-timeline">
+                        <div class="timeline-header">
+                            <h3>경력 타임라인</h3>
+                        </div>
+
+                        <div class="timeline-horizontal">
+                            <div class="timeline-track">
+                                <div class="timeline-block" data-company="컴투스" style="width: 20%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">컴투스</div>
+                                        <div class="period">2016.08 - 2018.08</div>
+                                        <div class="duration">2년</div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-gap" style="width: 3%;">
+                                    <span class="gap-label">4개월</span>
+                                </div>
+
+                                <div class="timeline-block" data-company="모디엠" style="width: 23%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">모디엠</div>
+                                        <div class="period">2018.12 - 2021.06</div>
+                                        <div class="duration">2년 7개월</div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-block" data-company="제스큐" style="width: 11%; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">제스큐</div>
+                                        <div class="period">2021.06 - 2022.03</div>
+                                        <div class="duration">9개월</div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-block" data-company="멘토스" style="width: 15%; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">멘토스</div>
+                                        <div class="period">2022.03 - 2023.08</div>
+                                        <div class="duration">1년 5개월</div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-gap" style="width: 1%;">
+                                    <span class="gap-label">1개월</span>
+                                </div>
+
+                                <div class="timeline-block" data-company="하트게임즈" style="width: 11%; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">하트게임즈</div>
+                                        <div class="period">2023.08 - 2023.11</div>
+                                        <div class="duration">3개월</div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-gap" style="width: 1%;">
+                                    <span class="gap-label">1개월</span>
+                                </div>
+
+                                <div class="timeline-block active" data-company="디카르고" style="width: 15%; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                    <div class="block-content">
+                                        <div class="company-name">디카르고</div>
+                                        <div class="period">2023.12 - 재직중</div>
+                                        <div class="duration">10개월</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-axis">
+                                <span class="axis-label">2016</span>
+                                <span class="axis-label">2018</span>
+                                <span class="axis-label">2020</span>
+                                <span class="axis-label">2022</span>
+                                <span class="axis-label">2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 자기소개서 섹션 -->
+            <section id="cover-letter" class="content-section">
+                <h1>이력서&자기소개서</h1>
+                <div class="file-viewer">
+                    <p>파일을 불러오는 중...</p>
+                </div>
+            </section>
+
+            <!-- 경력기술서 섹션 -->
+            <section id="career" class="content-section">
+                <h1>경력기술서</h1>
+                <div class="file-viewer">
+                    <p>파일을 업로드해주세요.</p>
+                </div>
+            </section>
+
+            <!-- 포트폴리오 섹션 -->
+            <section id="portfolio" class="content-section">
+                <h1>포트폴리오</h1>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card" data-portfolio="1">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">TOOL</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>Tool_Katalon_studio_with_Gemini_AI</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card" data-portfolio="2">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">GAME</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>Game_컴프야_개선안</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card" data-portfolio="3">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">TESTMO</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>사용법_Testmo_사용법</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card" data-portfolio="4">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">iOS</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>사용법_iOS_memory_누수검증</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card" data-portfolio="5">
+                        <div class="card-preview">
+                            <div class="preview-placeholder">QA</div>
+                        </div>
+                        <div class="card-info">
+                            <h3>이론_QA의 목적</h3>
+                            <p>클릭하여 자세히 보기</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 포트폴리오 상세 뷰 -->
+            <section id="portfolio-detail" class="content-section">
+                <div class="detail-header">
+                    <button id="backToGrid" class="back-btn">← 포트폴리오 목록으로</button>
+                    <h1 id="portfolioTitle">프로젝트</h1>
+                </div>
+                <div class="file-viewer">
+                    <p>파일을 불러오는 중...</p>
+                </div>
+            </section>
+
+            <!-- AI 포트폴리오 섹션 -->
+            <section id="ai-portfolio" class="content-section">
+                <h1>AI 포트폴리오(LINK)</h1>
+                <div class="ai-portfolio-grid">
+                    <div class="ai-card" data-url="https://gemini-supabase-katalon.netlify.app/">
+                        <div class="ai-card-header">
+                            <h3>Katalon_studio_Tool</h3>
+                        </div>
+                        <div class="ai-card-body">
+                            <div class="ai-card-link">
+                                <a href="https://gemini-supabase-katalon.netlify.app/" target="_blank" rel="noopener noreferrer">
+                                    🔗 https://gemini-supabase-katalon.netlify.app/
+                                </a>
+                            </div>
+                            <div class="ai-card-method">
+                                <strong>만든 방법:</strong> AI Vive Coding
+                            </div>
+                            <div class="ai-card-description">
+                                <strong>설명:</strong> Katalon studio를 사용하기 위한 Tool(With.Gemini)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-url="https://tcmaker.netlify.app/">
+                        <div class="ai-card-header">
+                            <h3>TestCase_Maker</h3>
+                        </div>
+                        <div class="ai-card-body">
+                            <div class="ai-card-link">
+                                <a href="https://tcmaker.netlify.app/" target="_blank" rel="noopener noreferrer">
+                                    🔗 https://tcmaker.netlify.app/
+                                </a>
+                            </div>
+                            <div class="ai-card-method">
+                                <strong>만든 방법:</strong> AI Vive Coding
+                            </div>
+                            <div class="ai-card-description">
+                                <strong>설명:</strong> 기획서와 TC 및 프롬프트를 활용하여 Testcase 작성해주는 Tool(With.Gemini)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-card" data-url="https://exercise-notion.netlify.app/">
+                        <div class="ai-card-header">
+                            <h3>운동일지</h3>
+                        </div>
+                        <div class="ai-card-body">
+                            <div class="ai-card-link">
+                                <a href="https://exercise-notion.netlify.app/" target="_blank" rel="noopener noreferrer">
+                                    🔗 https://exercise-notion.netlify.app/
+                                </a>
+                            </div>
+                            <div class="ai-card-method">
+                                <strong>만든 방법:</strong> AI Vive Coding
+                            </div>
+                            <div class="ai-card-description">
+                                <strong>설명:</strong> 개인 운동 기록 일지
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
