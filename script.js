@@ -173,9 +173,21 @@ function showPortfolioDetail(portfolioId) {
     // 포트폴리오 상세 섹션으로 전환
     switchSection('portfolio-detail');
 
+    // 현재 ID 저장
+    currentPortfolioId = portfolioId;
+
+    // 제목 매핑
+    const portfolioTitles = {
+        '1': 'Tool_Katalon_studio_with_Gemini_AI',
+        '2': 'Game_컴프야_개선안',
+        '3': '사용법_Testmo_사용법',
+        '4': '사용법_iOS_memory_누수검증',
+        '5': '이론_QA의 목적'
+    };
+
     // 제목 업데이트
     const title = document.getElementById('portfolioTitle');
-    title.textContent = `프로젝트 ${portfolioId}`;
+    title.textContent = portfolioTitles[portfolioId] || `프로젝트 ${portfolioId}`;
 
     // 파일 로드
     loadPortfolioFile(portfolioId);
@@ -185,6 +197,9 @@ function showPortfolioDetail(portfolioId) {
 function showResumeDetail(resumeType) {
     // 상세 섹션으로 전환
     switchSection('resume-detail');
+
+    // 현재 타입 저장
+    currentResumeType = resumeType;
 
     // 제목 업데이트
     const title = document.getElementById('resumeTitle');
@@ -569,5 +584,128 @@ async function renderResumeThumbnail(resumeType, container) {
     } catch (error) {
         console.error(`썸네일 로드 실패 (${resumeType}):`, error);
         // 에러 시 기본 플레이스홀더 유지
+    }
+}
+
+// ========================================
+// 다운로드 기능
+// ========================================
+
+let currentResumeType = null;
+let currentPortfolioId = null;
+
+// 이력서&자기소개서 전체 다운로드 (ZIP)
+async function downloadResumeAll() {
+    try {
+        const zip = new JSZip();
+        const files = [
+            { path: 'cover-letter/resume.pdf', name: 'QA_지원자_유재권_이력서.pdf' },
+            { path: 'cover-letter/cover-letter.pdf', name: 'QA_지원자_유재권_자기소개서.pdf' }
+        ];
+
+        for (const file of files) {
+            const url = await getFileUrl(file.path);
+            if (url) {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                zip.file(file.name, blob);
+            }
+        }
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = 'QA_지원자_유재권_이력서&자기소개서.zip';
+        link.click();
+    } catch (error) {
+        console.error('다운로드 실패:', error);
+        alert('다운로드 중 오류가 발생했습니다.');
+    }
+}
+
+// 포트폴리오 전체 다운로드 (ZIP)
+async function downloadPortfolioAll() {
+    try {
+        const zip = new JSZip();
+        const portfolioTitles = {
+            '1': 'Tool_Katalon_studio_with_Gemini_AI',
+            '2': 'Game_컴프야_개선안',
+            '3': '사용법_Testmo_사용법',
+            '4': '사용법_iOS_memory_누수검증',
+            '5': '이론_QA의 목적'
+        };
+
+        for (let i = 1; i <= 5; i++) {
+            const url = await getFileUrl(`cover-letter/portfolio-${i}.pdf`);
+            if (url) {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                zip.file(`QA_지원자_유재권_${portfolioTitles[i]}.pdf`, blob);
+            }
+        }
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = 'QA_지원자_유재권_포트폴리오.zip';
+        link.click();
+    } catch (error) {
+        console.error('다운로드 실패:', error);
+        alert('다운로드 중 오류가 발생했습니다.');
+    }
+}
+
+// 경력기술서 다운로드
+async function downloadCareer() {
+    await downloadSingleFile('cover-letter/career.pdf', 'QA_지원자_유재권_경력기술서.pdf');
+}
+
+// 현재 보고 있는 이력서/자기소개서 다운로드
+async function downloadCurrentResume() {
+    if (!currentResumeType) return;
+
+    const fileMap = {
+        'resume': { path: 'cover-letter/resume.pdf', name: 'QA_지원자_유재권_이력서.pdf' },
+        'cover-letter': { path: 'cover-letter/cover-letter.pdf', name: 'QA_지원자_유재권_자기소개서.pdf' }
+    };
+
+    const file = fileMap[currentResumeType];
+    await downloadSingleFile(file.path, file.name);
+}
+
+// 현재 보고 있는 포트폴리오 다운로드
+async function downloadCurrentPortfolio() {
+    if (!currentPortfolioId) return;
+
+    const portfolioTitles = {
+        '1': 'Tool_Katalon_studio_with_Gemini_AI',
+        '2': 'Game_컴프야_개선안',
+        '3': '사용법_Testmo_사용법',
+        '4': '사용법_iOS_memory_누수검증',
+        '5': '이론_QA의 목적'
+    };
+
+    const fileName = `QA_지원자_유재권_${portfolioTitles[currentPortfolioId]}.pdf`;
+    await downloadSingleFile(`cover-letter/portfolio-${currentPortfolioId}.pdf`, fileName);
+}
+
+// 단일 파일 다운로드 헬퍼 함수
+async function downloadSingleFile(filePath, downloadName) {
+    try {
+        const url = await getFileUrl(filePath);
+        if (!url) {
+            alert('파일을 찾을 수 없습니다.');
+            return;
+        }
+
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = downloadName;
+        link.click();
+    } catch (error) {
+        console.error('다운로드 실패:', error);
+        alert('다운로드 중 오류가 발생했습니다.');
     }
 }

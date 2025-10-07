@@ -50,13 +50,15 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
     position: relative;
     z-index: 100;
+    overflow: hidden;
 }
 
 .sidebar.collapsed {
-    transform: translateX(-100%);
+    width: 0;
+    border-right: none;
 }
 
 .sidebar-header {
@@ -301,6 +303,55 @@ body.light-theme .content-box {
     padding-bottom: 15px;
 }
 
+/* 섹션 헤더 (타이틀 + 다운로드 버튼) */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.section-header h1 {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* 다운로드 버튼 */
+.download-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.download-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+/* 상세 화면 타이틀 + 다운로드 */
+.title-with-download {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    margin-left: 20px;
+}
+
+.title-with-download h1 {
+    margin: 0;
+}
+
 /* 대시보드 스타일 */
 .dashboard-container {
     display: flex;
@@ -404,6 +455,60 @@ body.light-theme .content-box {
 .timeline-block:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* 타임라인 툴팁 */
+.timeline-tooltip {
+    position: absolute;
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f5f5f5;
+    color: #1a1a1a;
+    padding: 12px 16px;
+    border-radius: 8px;
+    min-width: 200px;
+    max-width: 400px;
+    width: max-content;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+/* 라이트 테마 툴팁 */
+body.light-theme .timeline-tooltip {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+/* 툴팁 화살표 */
+.timeline-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #f5f5f5;
+}
+
+body.light-theme .timeline-tooltip::after {
+    border-top-color: #2a2a2a;
+}
+
+.timeline-block:hover .timeline-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+.timeline-tooltip p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .timeline-block.active {
