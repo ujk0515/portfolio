@@ -361,10 +361,18 @@ document.addEventListener('DOMContentLoaded', () => {
         submenuToggle.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // 서브메뉴 토글
+            // 현재 클릭한 메뉴가 이미 열려있는지 확인
+            const isCurrentlyOpen = submenuToggle.classList.contains('open');
+
+            // 모든 서브메뉴 먼저 닫기
+            closeAllSubmenus();
+
+            // 서브메뉴 토글 (이미 열려있었으면 닫고, 닫혀있었으면 열기)
             const submenu = submenuToggle.nextElementSibling;
-            submenuToggle.classList.toggle('open');
-            submenu.classList.toggle('open');
+            if (!isCurrentlyOpen) {
+                submenuToggle.classList.add('open');
+                submenu.classList.add('open');
+            }
 
             // 섹션으로 이동 (카드 그리드 표시)
             const section = submenuToggle.getAttribute('data-section');
