@@ -464,6 +464,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 중간 섹션 링크 클릭 이벤트
+    const sectionLinks = document.querySelectorAll('.section-link');
+    sectionLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = link.getAttribute('data-section');
+
+            // 서브메뉴 닫기
+            closeAllSubmenus();
+
+            switchSection(section);
+        });
+    });
+
 });
 
 // 마퀴 효과 초기화
