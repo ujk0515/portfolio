@@ -927,6 +927,7 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 .ai-portfolio-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto auto auto auto auto;
     gap: 30px;
     padding: 20px 0;
 }
@@ -938,8 +939,9 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 7;
 }
 
 .ai-card:hover {
@@ -983,10 +985,10 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 
 .ai-card-body {
     padding: 20px;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 5;
     gap: 15px;
-    flex: 1;
 }
 
 .ai-card-link {
@@ -994,6 +996,7 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
     background-color: var(--bg-primary);
     border-radius: 8px;
     word-break: break-all;
+    width: 100%;
 }
 
 .ai-card-link a {
@@ -1018,6 +1021,39 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 .ai-card-method strong,
 .ai-card-description strong {
     color: var(--accent-color);
+}
+
+.ai-card-ai {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.ai-card-ai strong {
+    color: var(--accent-color);
+}
+
+.ai-card-github {
+    padding: 10px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    margin-top: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ai-card-github a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    display: inline-block;
+}
+
+.ai-card-github a:hover {
+    color: #60a5fa;
+    text-decoration: underline;
 }
 
 /* 반응형 디자인 */
