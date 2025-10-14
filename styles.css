@@ -1056,6 +1056,427 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
     text-decoration: underline;
 }
 
+/* 단기 자동화 스크립트 스타일 */
+.add-script-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-script-btn:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+}
+
+.add-script-btn:active {
+    transform: translateY(0);
+}
+
+/* 스크립트 목록 */
+.scripts-list-view {
+    padding: 20px 0;
+}
+
+/* 테이블 스타일 */
+.scripts-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.scripts-table thead {
+    background-color: var(--bg-primary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.scripts-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.scripts-table th:hover {
+    background-color: var(--hover-bg);
+}
+
+.scripts-table th[data-sort] {
+    padding-right: 35px;
+}
+
+.sort-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.scripts-table th.sort-asc .sort-indicator::after {
+    content: '▲';
+    color: var(--accent-color);
+}
+
+.scripts-table th.sort-desc .sort-indicator::after {
+    content: '▼';
+    color: var(--accent-color);
+}
+
+.scripts-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.scripts-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.scripts-table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.scripts-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.scripts-table td.script-no {
+    width: 80px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.scripts-table td.script-name {
+    font-family: 'Courier New', monospace;
+    color: var(--text-primary);
+}
+
+.scripts-table td.script-language {
+    width: 150px;
+}
+
+.language-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* 빈 상태 메시지 */
+.empty-scripts-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-scripts-message .empty-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.empty-scripts-message h3 {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.empty-scripts-message p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 페이지네이션 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.page-number {
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-number:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+}
+
+.page-number.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+    font-weight: 600;
+}
+
+.page-ellipsis {
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 0 4px;
+}
+
+/* 스크립트 에디터 */
+.script-editor-view {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 200px);
+}
+
+.editor-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.editor-controls {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    align-items: center;
+}
+
+.script-filename-input {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.script-filename-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.script-language-select {
+    padding: 10px 15px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.script-language-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.save-script-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.save-script-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.save-script-btn:active {
+    transform: translateY(0);
+}
+
+.monaco-editor-container {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* 비밀번호 모달 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background-color: var(--bg-content);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.modal-content p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.password-input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.password-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modal-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+    background-color: var(--hover-bg);
+}
+
+.confirm-btn {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.confirm-btn:active {
+    transform: translateY(0);
+}
+
+/* 빈 상태 메시지 */
+.empty-scripts-message {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--text-secondary);
+}
+
+.empty-scripts-message .empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.empty-scripts-message h3 {
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.empty-scripts-message p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .sidebar {

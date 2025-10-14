@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
 </head>
 <body>
     <!-- 좌측 메뉴바 -->
@@ -37,7 +38,7 @@
                     </ul>
                 </li>
                 <li><a href="#" data-section="ai-portfolio" class="menu-item">4. AI 포트폴리오(LINK)</a></li>
-                <li><span class="menu-item disabled">준비중</span></li>
+                <li><a href="#" data-section="automation-scripts" class="menu-item">5. 단기 자동화 스크립트</a></li>
             </ul>
         </nav>
     </aside>
@@ -390,7 +391,7 @@
                                 </a>
                             </div>
                             <div class="ai-card-method">
-                                <strong>만든 방법:</strong> AI Vibe Coding
+                                <strong>만든 방법:</strong> AI Vive Coding
                             </div>
                             <div class="ai-card-description">
                                 <strong>설명:</strong> Katalon studio를 사용하기 위한 Tool
@@ -420,7 +421,7 @@
                                 </a>
                             </div>
                             <div class="ai-card-method">
-                                <strong>만든 방법:</strong> AI Vibe Coding
+                                <strong>만든 방법:</strong> AI Vive Coding
                             </div>
                             <div class="ai-card-description">
                                 <strong>설명:</strong> 기획서와 TC 및 프롬프트를 활용하여 Testcase 작성해주는 Tool
@@ -450,7 +451,7 @@
                                 </a>
                             </div>
                             <div class="ai-card-method">
-                                <strong>만든 방법:</strong> AI Vibe Coding
+                                <strong>만든 방법:</strong> AI Vive Coding
                             </div>
                             <div class="ai-card-description">
                                 <strong>설명:</strong> 개인 운동 기록 일지
@@ -465,6 +466,59 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- 단기 자동화 스크립트 섹션 -->
+            <section id="automation-scripts" class="content-section">
+                <div class="section-header">
+                    <h1>단기 자동화 스크립트</h1>
+                    <button class="add-script-btn" id="addScriptBtn">+ 새 스크립트</button>
+                </div>
+
+                <!-- 스크립트 목록 뷰 -->
+                <div id="scriptsListView" class="scripts-list-view">
+                    <table class="scripts-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="no">No. <span class="sort-indicator"></span></th>
+                                <th data-sort="name">파일명 <span class="sort-indicator"></span></th>
+                                <th data-sort="language">문법 <span class="sort-indicator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="scriptsTableBody">
+                            <!-- 스크립트 목록이 동적으로 추가됩니다 -->
+                        </tbody>
+                    </table>
+
+                    <!-- 페이지네이션 -->
+                    <div id="paginationContainer" class="pagination-container">
+                        <button class="pagination-btn" id="prevPageBtn">← 이전</button>
+                        <div id="pageNumbers" class="page-numbers"></div>
+                        <button class="pagination-btn" id="nextPageBtn">다음 →</button>
+                    </div>
+                </div>
+
+                <!-- 스크립트 에디터 뷰 -->
+                <div id="scriptEditorView" class="script-editor-view" style="display: none;">
+                    <div class="editor-header">
+                        <button class="back-btn" id="backToScriptsList">← 목록으로</button>
+                        <div class="editor-controls">
+                            <input type="text" id="scriptFileName" class="script-filename-input" placeholder="파일명 (예: script.js)">
+                            <select id="scriptLanguage" class="script-language-select">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="shell">Shell/Bash</option>
+                                <option value="plaintext">Text</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="json">JSON</option>
+                                <option value="yaml">YAML</option>
+                            </select>
+                            <button class="save-script-btn" id="saveScriptBtn">💾 저장</button>
+                        </div>
+                    </div>
+                    <div id="monacoEditor" class="monaco-editor-container"></div>
                 </div>
             </section>
         </div>

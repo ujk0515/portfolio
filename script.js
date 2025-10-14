@@ -1,6 +1,6 @@
 // ========================================
 // Edge Function 설정
-// ========================================
+// ======================================== 
 
 const EDGE_FUNCTION_URL = 'https://ceilxgtgkfvvvfcgkmlx.supabase.co/functions/v1/abcd';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWx4Z3Rna2Z2dnZmY2drbWx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MjM4NzYsImV4cCI6MjA3NDk5OTg3Nn0.6F7g4VS-Uz8Cv0iKsGTiG2X0xP7lTfIfaN91gKifjpA';
@@ -31,7 +31,7 @@ async function getFileUrl(fileName) {
 
 // ========================================
 // 테마 관리
-// ========================================
+// ======================================== 
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
@@ -68,7 +68,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 
 // ========================================
 // 사이드바 토글
-// ========================================
+// ======================================== 
 
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -101,7 +101,7 @@ function closeAllSubmenus() {
 
 // ========================================
 // 메뉴 네비게이션
-// ========================================
+// ======================================== 
 
 function switchSection(sectionId) {
     const sections = document.querySelectorAll('.content-section');
@@ -120,15 +120,22 @@ function switchSection(sectionId) {
         activeMenuItem.classList.add('active');
     }
 
-    // 섹션 변경 시 파일 로드
-    if (sectionId !== 'dashboard') {
+    // 섹션 변경 시 파일 로드 (PDF 전용 섹션만)
+    if (sectionId === 'career') {
         loadFileFromSupabase(sectionId);
+    } else if (sectionId === 'automation-scripts') {
+        // 스크립트 섹션은 항상 새로고침 (리스트로 돌아감)
+        document.getElementById('scriptsListView').style.display = 'block';
+        document.getElementById('scriptEditorView').style.display = 'none';
+        currentPage = 1;
+        allScripts = [];
+        loadScriptsList();
     }
 }
 
 // ========================================
 // Supabase 파일 로드
-// ========================================
+// ======================================== 
 
 async function loadFileFromSupabase(section) {
     const viewer = document.querySelector(`#${section} .file-viewer`);
@@ -331,7 +338,7 @@ async function renderPDF(url, section) {
 
 // ========================================
 // 초기화
-// ========================================
+// ======================================== 
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
@@ -612,7 +619,7 @@ async function renderResumeThumbnail(resumeType, container) {
 
 // ========================================
 // 다운로드 기능
-// ========================================
+// ======================================== 
 
 let currentResumeType = null;
 let currentPortfolioId = null;
@@ -732,3 +739,477 @@ async function downloadSingleFile(filePath, downloadName) {
         alert('다운로드 중 오류가 발생했습니다.');
     }
 }
+
+// ========================================
+// 단기 자동화 스크립트 관리
+// ======================================== 
+
+const SCRIPTS_FOLDER = 'automation-scripts'; // Supabase Storage 폴더명
+
+let monacoEditor = null;
+let currentEditingScript = null;
+let isEditMode = false;
+
+// 페이지네이션 변수
+let allScripts = []; // 전체 스크립트 목록
+let currentPage = 1;
+const itemsPerPage = 20;
+
+// Monaco Editor 초기화
+function initMonacoEditor() {
+    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+        const isDarkTheme = !document.body.classList.contains('light-theme');
+
+        monacoEditor = monaco.editor.create(document.getElementById('monacoEditor'), {
+            value: '// 여기에 코드를 입력하세요\n',
+            language: 'javascript',
+            theme: isDarkTheme ? 'vs-dark' : 'vs',
+            automaticLayout: true,
+            fontSize: 14,
+            minimap: { enabled: true },
+            scrollBeyondLastLine: false,
+        });
+
+        // 언어 선택 변경 시 에디터 언어 변경
+        document.getElementById('scriptLanguage').addEventListener('change', (e) => {
+            const language = e.target.value;
+            monaco.editor.setModelLanguage(monacoEditor.getModel(), language);
+        });
+    });
+}
+
+// 스크립트 목록 보기로 전환
+function showScriptsList() {
+    document.getElementById('scriptsListView').style.display = 'block';
+    document.getElementById('scriptEditorView').style.display = 'none';
+    currentEditingScript = null;
+    isEditMode = false;
+
+    // 이미 로드된 스크립트가 있으면 다시 렌더링만 (페이지 유지)
+    if (allScripts.length > 0) {
+        renderScriptsPage();
+    } else {
+        loadScriptsList();
+    }
+}
+
+// 에디터 보기로 전환 (읽기 전용)
+function showScriptEditor(scriptData = null) {
+    document.getElementById('scriptsListView').style.display = 'none';
+    document.getElementById('scriptEditorView').style.display = 'flex';
+
+    if (!monacoEditor) {
+        initMonacoEditor();
+        // Monaco 초기화 대기 후 데이터 설정
+        setTimeout(() => {
+            if (scriptData) {
+                setEditorContent(scriptData);
+            }
+        }, 500);
+    } else {
+        if (scriptData) {
+            setEditorContent(scriptData);
+        }
+    }
+}
+
+function setEditorContent(scriptData) {
+    if (!monacoEditor) return;
+
+    isEditMode = false;
+    currentEditingScript = scriptData;
+    document.getElementById('scriptFileName').value = scriptData.name;
+    document.getElementById('scriptLanguage').value = scriptData.language;
+    monacoEditor.setValue(scriptData.content);
+    monaco.editor.setModelLanguage(monacoEditor.getModel(), scriptData.language);
+    monacoEditor.updateOptions({ readOnly: true });
+}
+
+// Supabase Storage에서 스크립트 목록 가져오기
+async function loadScriptsList() {
+    const tableBody = document.getElementById('scriptsTableBody');
+    const scriptsListView = document.getElementById('scriptsListView');
+
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="3" style="text-align: center; padding: 40px;">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text">스크립트 목록을 불러오는 중...</div>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    try {
+        // Supabase Storage API로 폴더 내 파일 목록 가져오기 (POST 방식)
+        const response = await fetch('https://ceilxgtgkfvvvfcgkmlx.supabase.co/storage/v1/object/list/portfolio-files', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prefix: SCRIPTS_FOLDER,
+                limit: 100,
+                offset: 0
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Storage API Error:', errorText);
+            throw new Error(`Storage API failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Scripts data:', data);
+
+        // 폴더 자체를 제외하고 실제 파일만 필터링
+        allScripts = data.filter(item => item.name && item.name !== SCRIPTS_FOLDER && !item.name.endsWith('/'));
+
+        if (allScripts.length === 0) {
+            scriptsListView.innerHTML = `
+                <div class="empty-scripts-message">
+                    <div class="empty-icon">📝</div>
+                    <h3>저장된 스크립트가 없습니다</h3>
+                    <p>Supabase Storage의 automation-scripts 폴더에 스크립트 파일을 업로드해주세요.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // 첫 페이지 렌더링
+        currentPage = 1;
+        renderScriptsPage();
+    } catch (error) {
+        console.error('스크립트 목록 로드 에러:', error);
+        scriptsListView.innerHTML = `
+            <div class="empty-scripts-message">
+                <div class="empty-icon">⚠️</div>
+                <h3>스크립트 목록을 불러올 수 없습니다</h3>
+                <p>오류: ${error.message}</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #888;">
+                    Supabase Storage의 portfolio-files 버킷 권한을 확인해주세요.<br>
+                    버킷이 Public 또는 인증된 사용자만 읽기 가능하도록 설정되어야 합니다.
+                </p>
+            </div>
+        `;
+    }
+}
+
+// 현재 페이지의 스크립트 렌더링
+function renderScriptsPage() {
+    const tableBody = document.getElementById('scriptsTableBody');
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageScripts = allScripts.slice(startIndex, endIndex);
+
+    // 테이블 행 렌더링
+    tableBody.innerHTML = '';
+    pageScripts.forEach((script, index) => {
+        const globalIndex = startIndex + index + 1; // 전체 목록 기준 번호
+        const row = createScriptRow(script, globalIndex);
+        tableBody.appendChild(row);
+    });
+
+    // 페이지네이션 렌더링
+    renderPagination();
+}
+
+// 페이지네이션 UI 렌더링
+function renderPagination() {
+    const totalPages = Math.ceil(allScripts.length / itemsPerPage);
+    const paginationContainer = document.getElementById('paginationContainer');
+    const pageNumbers = document.getElementById('pageNumbers');
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+
+    // 페이지가 1개 이하면 페이지네이션 숨김
+    if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+
+    paginationContainer.style.display = 'flex';
+
+    // 이전/다음 버튼 상태
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+
+    // 페이지 번호 생성
+    pageNumbers.innerHTML = '';
+
+    const maxVisiblePages = 7; // 최대 표시 페이지 수
+    let startPage, endPage;
+
+    if (totalPages <= maxVisiblePages) {
+        startPage = 1;
+        endPage = totalPages;
+    } else {
+        if (currentPage <= 4) {
+            startPage = 1;
+            endPage = 5;
+        } else if (currentPage >= totalPages - 3) {
+            startPage = totalPages - 4;
+            endPage = totalPages;
+        } else {
+            startPage = currentPage - 2;
+            endPage = currentPage + 2;
+        }
+    }
+
+    // 첫 페이지
+    if (startPage > 1) {
+        addPageNumber(1);
+        if (startPage > 2) {
+            addEllipsis();
+        }
+    }
+
+    // 중간 페이지들
+    for (let i = startPage; i <= endPage; i++) {
+        addPageNumber(i);
+    }
+
+    // 마지막 페이지
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            addEllipsis();
+        }
+        addPageNumber(totalPages);
+    }
+}
+
+function addPageNumber(pageNum) {
+    const pageNumbers = document.getElementById('pageNumbers');
+    const pageBtn = document.createElement('div');
+    pageBtn.className = 'page-number';
+    pageBtn.textContent = pageNum;
+
+    if (pageNum === currentPage) {
+        pageBtn.classList.add('active');
+    }
+
+    pageBtn.addEventListener('click', () => {
+        currentPage = pageNum;
+        renderScriptsPage();
+    });
+
+    pageNumbers.appendChild(pageBtn);
+}
+
+function addEllipsis() {
+    const pageNumbers = document.getElementById('pageNumbers');
+    const ellipsis = document.createElement('span');
+    ellipsis.className = 'page-ellipsis';
+    ellipsis.textContent = '...';
+    pageNumbers.appendChild(ellipsis);
+}
+
+// 스크립트 테이블 행 생성
+function createScriptRow(scriptFile, rowNumber) {
+    const row = document.createElement('tr');
+
+    const fileName = scriptFile.name;
+    const language = detectLanguage(fileName);
+
+    row.innerHTML = `
+        <td class="script-no">${rowNumber}</td>
+        <td class="script-name">${fileName}</td>
+        <td class="script-language">
+            <span class="language-badge">${language}</span>
+        </td>
+    `;
+
+    // 행 클릭 시 뷰어로 이동
+    row.addEventListener('click', () => viewScript(fileName));
+
+    return row;
+}
+
+// 파일명으로 언어 감지
+function detectLanguage(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const languageMap = {
+        'js': 'JavaScript',
+        'py': 'Python',
+        'sh': 'Shell',
+        'bash': 'Bash',
+        'txt': 'Text',
+        'html': 'HTML',
+        'css': 'CSS',
+        'json': 'JSON',
+        'yaml': 'YAML',
+        'yml': 'YAML',
+        'groovy': 'Groovy',
+        'dart': 'Flutter'
+    };
+    return languageMap[ext] || 'Unknown';
+}
+
+// 파일명에서 Monaco 언어 코드 추출
+function getMonacoLanguage(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const languageMap = {
+        'js': 'javascript',
+        'py': 'python',
+        'sh': 'shell',
+        'bash': 'shell',
+        'txt': 'plaintext',
+        'html': 'html',
+        'css': 'css',
+        'json': 'json',
+        'yaml': 'yaml',
+        'yml': 'yaml',
+        'groovy': 'javascript', // Groovy는 JavaScript로 표시
+        'dart': 'dart'
+    };
+    return languageMap[ext] || 'plaintext';
+}
+
+// 스크립트 내용 로드
+async function loadScriptContent(fileName) {
+    const fullPath = `${SCRIPTS_FOLDER}/${fileName}`;
+    const fileUrl = await getFileUrl(fullPath);
+    if (!fileUrl) {
+        throw new Error('파일 URL을 가져올 수 없습니다.');
+    }
+
+    const response = await fetch(fileUrl);
+    if (!response.ok) {
+        throw new Error('파일을 불러올 수 없습니다.');
+    }
+
+    return await response.text();
+}
+
+// 스크립트 보기
+async function viewScript(fileName) {
+    try {
+        const content = await loadScriptContent(fileName);
+        const language = getMonacoLanguage(fileName);
+
+        showScriptEditor({
+            name: fileName,
+            language: language,
+            content: content
+        });
+    } catch (error) {
+        alert('스크립트를 불러오는 데 실패했습니다: ' + error.message);
+    }
+}
+
+// 테이블 정렬 기능
+let currentSortColumn = null;
+let currentSortDirection = 'asc';
+
+function initTableSorting() {
+    const headers = document.querySelectorAll('.scripts-table th[data-sort]');
+
+    headers.forEach(header => {
+        header.addEventListener('click', () => {
+            const sortKey = header.getAttribute('data-sort');
+            sortTable(sortKey, header);
+        });
+    });
+}
+
+function sortTable(sortKey, headerElement) {
+    // 정렬 방향 결정
+    if (currentSortColumn === sortKey) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentSortDirection = 'asc';
+    }
+    currentSortColumn = sortKey;
+
+    // 모든 헤더에서 정렬 클래스 제거
+    document.querySelectorAll('.scripts-table th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+    });
+
+    // 현재 헤더에 정렬 클래스 추가
+    headerElement.classList.add(`sort-${currentSortDirection}`);
+
+    // allScripts 배열 정렬
+    allScripts.sort((a, b) => {
+        let aValue, bValue;
+
+        switch(sortKey) {
+            case 'no':
+                // 파일명으로 정렬 (no는 순서이므로)
+                aValue = a.name.toLowerCase();
+                bValue = b.name.toLowerCase();
+                break;
+            case 'name':
+                aValue = a.name.toLowerCase();
+                bValue = b.name.toLowerCase();
+                break;
+            case 'language':
+                aValue = detectLanguage(a.name).toLowerCase();
+                bValue = detectLanguage(b.name).toLowerCase();
+                break;
+        }
+
+        if (aValue < bValue) return currentSortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return currentSortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // 첫 페이지로 이동하고 다시 렌더링
+    currentPage = 1;
+    renderScriptsPage();
+}
+
+// 이벤트 리스너 등록 (자동화 스크립트 섹션)
+document.addEventListener('DOMContentLoaded', () => {
+    // + 새 스크립트 버튼 숨기기 (읽기 전용이므로 불필요)
+    const addScriptBtn = document.getElementById('addScriptBtn');
+    if (addScriptBtn) {
+        addScriptBtn.style.display = 'none';
+    }
+
+    // 목록으로 돌아가기 버튼
+    const backToScriptsList = document.getElementById('backToScriptsList');
+    if (backToScriptsList) {
+        backToScriptsList.addEventListener('click', () => {
+            showScriptsList();
+        });
+    }
+
+    // 저장 버튼 숨기기 (읽기 전용)
+    const saveScriptBtn = document.getElementById('saveScriptBtn');
+    if (saveScriptBtn) {
+        saveScriptBtn.style.display = 'none';
+    }
+
+    // 테이블 정렬 이벤트 초기화
+    initTableSorting();
+
+    // 페이지네이션 이전/다음 버튼 이벤트
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderScriptsPage();
+            }
+        });
+    }
+
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(allScripts.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderScriptsPage();
+            }
+        });
+    }
+});
