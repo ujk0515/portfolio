@@ -97,6 +97,7 @@ body {
 .menu {
     padding: 20px 0;
     flex: 1;
+    overflow-y: auto;
 }
 
 .menu ul {
@@ -220,6 +221,40 @@ body {
     50% {
         transform: translateX(calc(-100% + 140px));
     }
+}
+
+/* 방문자 카운터 */
+.visitor-counter {
+    padding: 8px 15px;
+    margin: 15px 20px;
+    background-color: transparent;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.visitor-icon {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.visitor-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.visitor-count {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+    opacity: 0.7;
 }
 
 /* 메인 콘텐츠 */
