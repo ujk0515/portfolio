@@ -494,7 +494,7 @@ function initMarqueeEffect() {
     submenuItems.forEach(item => {
         const textElement = item.querySelector('.marquee-text');
         if (textElement && !textElement.classList.contains('scrolling')) {
-            // 텍스트 영역이 부모 요소를 넘치는지 확인
+            // 텍스트 영역이 부모 요소를 넘��는지 확인
             const textWidth = textElement.scrollWidth;
             const itemWidth = item.clientWidth - 40; // padding 제외 (좌측 40px)
 
@@ -1215,139 +1215,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ========================================
-// 방문자 카운터 시스템
+// 방문자 카운터 시스템 (IP 기반)
 // ========================================
 
-const SUPABASE_URL = 'https://ceilxgtgkfvvvfcgkmlx.supabase.co';
-
-// 고유 방문자 ID 생성 또는 가져오기
-function getVisitorId() {
-    let visitorId = localStorage.getItem('visitor_id');
-    if (!visitorId) {
-        visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('visitor_id', visitorId);
-    }
-    return visitorId;
-}
-
-// 오늘 날짜 문자열 (YYYY-MM-DD)
-function getTodayDate() {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-}
-
-// 방문자 수 조회
-async function getVisitorCount() {
-    try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/visitor_count?id=eq.1`, {
-            method: 'GET',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch visitor count');
-        }
-
-        const data = await response.json();
-        if (data && data.length > 0) {
-            return data[0].total_count;
-        }
-        return 0;
-    } catch (error) {
-        console.error('방문자 수 조회 에러:', error);
-        return 0;
-    }
-}
-
-// 오늘 이미 방문했는지 확인
-async function hasVisitedToday(visitorId, todayDate) {
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/daily_visitors?visitor_id=eq.${visitorId}&visit_date=eq.${todayDate}`,
-            {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error('Failed to check visit status');
-        }
-
-        const data = await response.json();
-        return data && data.length > 0;
-    } catch (error) {
-        console.error('방문 확인 에러:', error);
-        return true; // 에러 시 이미 방문한 것으로 간주 (중복 카운트 방지)
-    }
-}
-
-// 오늘의 방문 기록 추가
-async function recordVisit(visitorId, todayDate) {
-    try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_visitors`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({
-                visitor_id: visitorId,
-                visit_date: todayDate
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to record visit');
-        }
-
-        return true;
-    } catch (error) {
-        console.error('방문 기록 에러:', error);
-        return false;
-    }
-}
-
-// 방문자 수 증가
-async function incrementVisitorCount() {
-    try {
-        // 현재 카운트 조회
-        const currentCount = await getVisitorCount();
-        const newCount = currentCount + 1;
-
-        // 카운트 업데이트
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/visitor_count?id=eq.1`, {
-            method: 'PATCH',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({
-                total_count: newCount,
-                updated_at: new Date().toISOString()
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to increment visitor count');
-        }
-
-        return newCount;
-    } catch (error) {
-        console.error('방문자 수 증가 에러:', error);
-        return null;
-    }
-}
+const VISITOR_COUNTER_FUNCTION_URL = 'https://ceilxgtgkfvvvfcgkmlx.supabase.co/functions/v1/visitor-counter';
 
 // 방문자 수를 화면에 표시 (4자리 포맷)
 function displayVisitorCount(count) {
@@ -1358,28 +1229,31 @@ function displayVisitorCount(count) {
     }
 }
 
-// 방문자 카운터 초기화
+// 방문자 카운터 초기화 (IP 기반)
 async function initVisitorCounter() {
     try {
-        const visitorId = getVisitorId();
-        const todayDate = getTodayDate();
-
-        // 현재 방문자 수 조회 및 표시
-        const currentCount = await getVisitorCount();
-        displayVisitorCount(currentCount);
-
-        // 오늘 이미 방문했는지 확인
-        const alreadyVisited = await hasVisitedToday(visitorId, todayDate);
-
-        if (!alreadyVisited) {
-            // 첫 방문이면 방문 기록 및 카운트 증가
-            const recorded = await recordVisit(visitorId, todayDate);
-            if (recorded) {
-                const newCount = await incrementVisitorCount();
-                if (newCount !== null) {
-                    displayVisitorCount(newCount);
-                }
+        // Edge Function 호출 (IP 자동 감지 및 카운팅)
+        const response = await fetch(VISITOR_COUNTER_FUNCTION_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
             }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch visitor count');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            displayVisitorCount(data.totalCount);
+            console.log('Visitor tracking:', {
+                ip: data.clientIp,
+                isNew: data.isNewVisitor,
+                total: data.totalCount
+            });
         }
     } catch (error) {
         console.error('방문자 카운터 초기화 에러:', error);
