@@ -958,137 +958,113 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
     padding: 0;
 }
 
-/* AI 포트폴리오 그리드 */
-.ai-portfolio-grid {
+/* AI 포트폴리오 리스트 - 2x2 그리드 */
+.ai-portfolio-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto auto auto auto auto auto;
-    gap: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
     padding: 20px 0;
 }
 
-.ai-card {
+.ai-list-item {
+    display: flex;
+    gap: 12px;
     background-color: var(--bg-secondary);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    padding: 12px;
     border: 1px solid var(--border-color);
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 7;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 120px;
 }
 
-.ai-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+.ai-list-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     border-color: var(--accent-color);
 }
 
-.ai-card-preview {
-    width: 100%;
-    height: 200px;
+.ai-list-preview {
+    flex-shrink: 0;
+    width: 140px;
+    height: 110px;
     background-color: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
+    border-radius: 6px;
     overflow: hidden;
-    position: relative;
+    border: 1px solid var(--border-color);
 }
 
-.ai-card-preview iframe {
+.ai-list-preview iframe {
     width: 100%;
     height: 100%;
     border: none;
     pointer-events: none;
-    transform: scale(0.5);
+    transform: scale(0.35);
     transform-origin: top left;
-    width: 200%;
-    height: 200%;
+    width: 285%;
+    height: 285%;
 }
 
-.ai-card-header {
-    background: linear-gradient(135deg, var(--accent-color), #60a5fa);
-    padding: 20px;
-    text-align: center;
+.ai-list-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    min-width: 0;
 }
 
-.ai-card-header h3 {
-    color: white;
-    font-size: 20px;
+.ai-list-content h3 {
+    font-size: 18px;
+    color: var(--text-primary);
     margin: 0;
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.ai-card-body {
-    padding: 20px;
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 5;
-    gap: 15px;
+.ai-list-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.ai-card-link {
-    padding: 10px;
-    background-color: var(--bg-primary);
-    border-radius: 8px;
-    word-break: break-all;
-    width: 100%;
-}
-
-.ai-card-link a {
+.ai-list-links a {
     color: var(--accent-color);
     text-decoration: none;
     font-size: 14px;
     transition: color 0.2s ease;
+    white-space: nowrap;
 }
 
-.ai-card-link a:hover {
+.ai-list-links a:hover {
     color: #60a5fa;
     text-decoration: underline;
 }
 
-.ai-card-method,
-.ai-card-description {
+.link-divider {
+    color: var(--text-secondary);
     font-size: 14px;
-    line-height: 1.6;
+}
+
+.ai-list-description {
+    font-size: 14px;
+    line-height: 1.4;
     color: var(--text-primary);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
-.ai-card-method strong,
-.ai-card-description strong {
-    color: var(--accent-color);
-}
-
-.ai-card-ai {
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--text-primary);
-}
-
-.ai-card-ai strong {
-    color: var(--accent-color);
-}
-
-.ai-card-github {
-    padding: 10px;
-    background-color: var(--bg-primary);
-    border-radius: 8px;
-    margin-top: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.ai-card-github a {
-    color: var(--accent-color);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: color 0.2s ease;
-    display: inline-block;
-}
-
-.ai-card-github a:hover {
-    color: #60a5fa;
-    text-decoration: underline;
+.ai-list-tech {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
 }
 
 /* 단기 자동화 스크립트 스타일 */
