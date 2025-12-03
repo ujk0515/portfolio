@@ -189,7 +189,8 @@ function showPortfolioDetail(portfolioId) {
         '2': 'Game_컴프야_개선안',
         '3': '사용법_Testmo_사용법',
         '4': '사용법_iOS_memory_누수검증',
-        '5': '이론_QA의 목적'
+        '5': '이론_QA의 목적',
+        '6': 'BTS&AI Maker Tool'
     };
 
     // 제목 업데이트
@@ -509,7 +510,7 @@ function initMarqueeEffect() {
 
 // 포트폴리오 카드 썸네일 로드
 async function loadPortfolioThumbnails() {
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
         const card = document.querySelector(`.portfolio-card[data-portfolio="${i}"]`);
         if (card) {
             const previewElement = card.querySelector('.card-preview');
@@ -662,10 +663,11 @@ async function downloadPortfolioAll() {
             '2': 'Game_컴프야_개선안',
             '3': '사용법_Testmo_사용법',
             '4': '사용법_iOS_memory_누수검증',
-            '5': '이론_QA의 목적'
+            '5': '이론_QA의 목적',
+            '6': 'BTS&AI Maker Tool'
         };
 
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 6; i++) {
             const url = await getFileUrl(`cover-letter/portfolio-${i}.pdf`);
             if (url) {
                 const response = await fetch(url);
@@ -712,7 +714,8 @@ async function downloadCurrentPortfolio() {
         '2': 'Game_컴프야_개선안',
         '3': '사용법_Testmo_사용법',
         '4': '사용법_iOS_memory_누수검증',
-        '5': '이론_QA의 목적'
+        '5': '이론_QA의 목적',
+        '6': 'BTS&AI Maker Tool'
     };
 
     const fileName = `QA_지원자_유재권_${portfolioTitles[currentPortfolioId]}.pdf`;

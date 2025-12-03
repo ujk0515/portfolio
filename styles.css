@@ -873,8 +873,8 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 /* 포트폴리오 그리드 */
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     padding: 20px 0;
 }
 
@@ -895,7 +895,7 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 
 .card-preview {
     width: 100%;
-    height: 250px;
+    height: 180px;
     background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
     display: flex;
     align-items: center;
@@ -912,17 +912,17 @@ body.light-theme .timeline-block-last .timeline-tooltip::after {
 }
 
 .card-info {
-    padding: 20px;
+    padding: 15px;
 }
 
 .card-info h3 {
-    font-size: 20px;
+    font-size: 16px;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .card-info p {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
 }
 
